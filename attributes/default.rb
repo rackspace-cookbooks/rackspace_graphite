@@ -60,8 +60,8 @@ default['graphite']['create_user'] = false
 
 case node['graphite']['web_server']
 when 'apache'
-  default['graphite']['user_account'] = node['apache']['user']
-  default['graphite']['group_account'] = node['apache']['group']
+      default['graphite']['user_account'] = node['apache']['user']
+      default['graphite']['group_account'] = node['apache']['group']
 when 'uwsgi'
   default['graphite']['user_account'] = 'graphite'
   default['graphite']['group_account'] = 'graphite'
