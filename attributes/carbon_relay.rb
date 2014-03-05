@@ -15,5 +15,5 @@ default['graphite']['carbon']['relay']['method'] = 'rules' # rules | consistent-
 default['graphite']['carbon']['relay']['replication_factor'] = 1
 default['graphite']['carbon']['relay']['destinations'] = []
 default['graphite']['carbon']['relay']['max_datapoints_per_message'] = 500
-default['graphite']['carbon']['relay']['max_queue_size'] = 10000
+default['graphite']['carbon']['relay']['max_queue_size'] = 10_000
 default['graphite']['carbon']['relay']['use_flow_control'] = 'True'

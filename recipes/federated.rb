@@ -40,27 +40,27 @@ if Chef::Config[:solo]
   node.default['graphite']['carbon']['relay']['destinations'] = [
     "127.0.0.1:#{node['graphite']['carbon']['pickle_receiver_port']}:a"
   ]
-else
-  if node['graphite']['chef_role']
-    graphite_results = search(:node, "roles:#{node['graphite']['chef_role']} AND chef_environment:#{node.chef_environment}").sort
-    if graphite_results
-      destinations = []
-      cluster_servers = []
+end
 
-      graphite_results.each do |result|
-        destinations << "#{result['fqdn']}:#{result['graphite']['carbon']['pickle_receiver_port']}:a"
-        if result['fqdn'] != node['fqdn']
-          cluster_servers << "#{result['fqdn']}:#{node['graphite']['listen_port']}"
-          ext_instances << "#{result['fqdn']}:a"
-        else
-          int_instances << "#{result['fqdn']}:a"
-        end
+if node['graphite']['chef_role'] && !Chef::Config[:solo]
+  graphite_results = search(:node, "roles:#{node['graphite']['chef_role']} AND chef_environment:#{node.chef_environment}").sort
+  if graphite_results
+    destinations = []
+    cluster_servers = []
+
+    graphite_results.each do |result|
+      destinations << "#{result['fqdn']}:#{result['graphite']['carbon']['pickle_receiver_port']}:a"
+      if result['fqdn'] != node['fqdn']
+        cluster_servers << "#{result['fqdn']}:#{node['graphite']['listen_port']}"
+        ext_instances << "#{result['fqdn']}:a"
+      else
+        int_instances << "#{result['fqdn']}:a"
       end
-
-      node.default['graphite']['carbon']['relay']['destinations'] = destinations
-      node.default['graphite']['graphite_web']['carbonlink_hosts'] = destinations
-      node.default['graphite']['graphite_web']['cluster_servers'] = cluster_servers
     end
+
+    node.default['graphite']['carbon']['relay']['destinations'] = destinations
+    node.default['graphite']['graphite_web']['carbonlink_hosts'] = destinations
+    node.default['graphite']['graphite_web']['cluster_servers'] = cluster_servers
   end
 end
 
@@ -68,7 +68,7 @@ node.default['graphite']['relay_rules'] = [
   {
     'name' => 'default_rule',
     'default' => true,
-    'destinations' => node['graphite']['carbon']['relay']['destinations'],
+    'destinations' => node['graphite']['carbon']['relay']['destinations']
   }
 ]
 

@@ -21,9 +21,9 @@ service_type = node['graphite']['carbon']['service_type']
 
 case service_type
 when 'runit'
-  carbon_aggregator_service_resource = 'runit_service[carbon-aggregator]'
+ # carbon_aggregator_service_resource = 'runit_service[carbon-aggregator]'
 else
-  carbon_aggregator_service_resource = 'service[carbon-aggregator]'
+ # carbon_aggregator_service_resource = 'service[carbon-aggregator]'
 end
 
 # aggregation-rules.conf file is automatically reloaded by the carbon-aggregator process.
