@@ -28,11 +28,11 @@ describe 'graphite::default' do
             runner = ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s)
             runner.converge('graphite::default')
           end
-          it 'include the default recipe' do
-            expect(chef_run).to include_recipe 'graphite::default'
+          it 'include the apache2 recipe' do
+            expect(chef_run).to include_recipe 'apache2'
           end
-          it 'install package apache2' do
-            expect(chef_run).to install_package 'apache2'
+          it 'include the user recipe' do
+            expect(chef_run).to include_recipe 'graphite::user'
           end
         end
       end

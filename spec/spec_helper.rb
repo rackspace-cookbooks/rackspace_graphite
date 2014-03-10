@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: activemq
+# Cookbook Name:: graphite
 #
 # Copyright 2014, Rackspace, UK, Ltd.
 # Copyright 2012-2013, Seth Vargo
@@ -24,4 +24,4 @@ require 'chefspec/berkshelf'
 
 require_relative 'supported_platforms.rb'
 
-#at_exit { ChefSpec::Coverage.report! }
+at_exit { ChefSpec::Coverage.report! }

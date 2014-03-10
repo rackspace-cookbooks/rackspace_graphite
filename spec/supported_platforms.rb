@@ -18,7 +18,7 @@
 # This helper file defines the platforms to test in ChefSpec
 
 def graphite_test_platforms
-  return {
+  {
     ubuntu: %w(12.04),
     debian: %w(7.2), # Requires Fauxhai chicanery as https://github.com/customink/fauxhai/pull/60
                      #   hasn't made its way to RubyGems yet.
