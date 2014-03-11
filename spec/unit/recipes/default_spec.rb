@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'graphite::default' do
+describe 'rackspace_graphite::default' do
   graphite_test_platforms.each do |platform, versions|
     describe "on #{platform}" do
       versions.each do |version|
@@ -26,13 +26,13 @@ describe 'graphite::default' do
           end
           let(:chef_run) do
             runner = ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s)
-            runner.converge('graphite::default')
+            runner.converge('rackspace_graphite::default')
           end
           it 'include the apache2 recipe' do
             expect(chef_run).to include_recipe 'apache2'
           end
           it 'include the user recipe' do
-            expect(chef_run).to include_recipe 'graphite::user'
+            expect(chef_run).to include_recipe 'rackspace_graphite::user'
           end
         end
       end

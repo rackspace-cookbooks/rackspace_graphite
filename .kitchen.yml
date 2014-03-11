@@ -1,106 +1,31 @@
 ---
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
+driver:
+  name: rackspace
+  require_chef_omnibus: '11.8.2'
+  rackspace_username: <%= ENV['rackspace_username'] %>
+  rackspace_api_key:  <%= ENV['rackspace_api_key'] %>
+  rackspace_region: 'lon'
+  public_key_path: <%= ENV['sshpubkey'] %>
+  ssh_key: <%= ENV['ssh_key'] %>
 
 platforms:
-- name: ubuntu-12.04
-  run_list:
-  - recipe[apt]
-- name: ubuntu-10.04
-  run_list:
-  - recipe[apt]
 - name: centos-6.4
+  driver_config:
+    image_id: 'f70ed7c7-b42e-4d77-83d8-40fa29825b85'
   run_list:
-  - recipe[yum]
-- name: centos-5.9
+    - recipe[rackspace_yum]
+- name: ubuntu-12.04
+  driver_config:
+    image_id: '80fbcb55-b206-41f9-9bc2-2dd7aac6c061'
   run_list:
-  - recipe[yum]
+  - recipe[rackspace_apt]
+- name: debian-7.2
+  driver_config:
+    image_id: '857d7d36-34f3-409f-8435-693e8797be8b'
+  run_list:
+    - recipe[rackspace_apt]
 
 suites:
-- name: default
-  run_list:
-  - recipe[graphite]
-  attributes: {}
-
-- name: ssl
-  run_list:
-  - recipe[graphite_test::ssl]
-  - recipe[graphite]
-  attributes: {
-    "graphite": {
-      "ssl": {
-        "enabled": true,
-        "ca_certificate_file":  "/etc/ssl/server.crt"
-      },
-      "listen_port": "443"
-    }
-  }
-
-- name: uwsgi
-  run_list:
-  - recipe[graphite]
-  attributes: {
-    "graphite": {
-      "listen_port": "8080",
-      "web_server": "uwsgi"
-    }
-  }
-
-- name: carbon-relay
-  run_list:
-  - recipe[graphite]
-  - recipe[graphite::carbon_relay]
-  attributes: {
-    "graphite": {
-      "carbon": {
-        "relay": {
-          "destinations": [ "127.0.0.1:2003:a" ]
-        },
-      },
-      "relay_rules": [
-        {
-          "name": "example_pattern",
-          "pattern": "^mydata\\.foo\\..+",
-          "destinations": [ "10.1.2.3:2004" ]
-        },{
-          "name": "example_default",
-          "default": true,
-          "destinations": [ "127.0.0.1:2004" ]
-        }
-      ]
-    }
-  }
-- name: carbon-aggregator
-  run_list:
-  - recipe[graphite]
-  - recipe[graphite::carbon_aggregator]
-  attributes: {
-   "graphite": {
-      "storage_aggregation": [
-        {
-          "name": "all_min",
-          "pattern": ".min$",
-          "xFilesFactor": "0.1",
-          "aggregationMethod": "min"
-        }
-      ],
-      "aggregation_rules": [
-        {
-          "output_template": "<env>.applications.<app>.all.requests",
-          "frequency": "60",
-          "method": "sum",
-          "input_pattern": "<env>.applications.<app>.*.requests"
-        },{
-          "output_template": "<env>.applications.<app>.all.latency",
-          "frequency": "60",
-          "method": "sum",
-          "input_pattern": "<env>.applications.<app>.*.latency"
-        }
-      ]
-    }
-  }
-- name: federated
-  run_list:
-  - recipe[graphite::federated]
-  attributes: {}
+  - name: rackspace_graphite
+    run_list:
+      - recipe[rackspace_graphite]

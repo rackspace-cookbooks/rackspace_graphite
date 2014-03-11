@@ -144,7 +144,7 @@ file "#{storagedir}/graphite.db" do
 end
 
 if node['graphite']['web_server'] == 'apache'
-  include_recipe 'graphite::apache'
+  include_recipe 'rackspace_graphite::apache'
 else
-  include_recipe 'graphite::uwsgi'
+  include_recipe 'rackspace_graphite::uwsgi'
 end

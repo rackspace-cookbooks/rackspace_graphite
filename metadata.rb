@@ -1,15 +1,14 @@
-name             'graphite'
-maintainer       'Heavy Water Software Inc.'
-maintainer_email 'ops@hw-ops.com'
+name             'rackspace_graphite'
+maintainer       'Rackspace'
+maintainer_email 'rackspace-cookbooks@rackspace.com'
 license          'Apache 2.0'
-description      'Installs/Configures graphite'
+description      'Installs and configures graphite'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.4.3'
+version          '1.0.0'
 
-supports 'ubuntu'
-supports 'debian'
-supports 'redhat'
-supports 'centos'
+%w(ubuntu debian redhat centos).each do |os|
+  supports os
+end
 
 depends  'python'
 depends  'apache2'
