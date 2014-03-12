@@ -72,8 +72,8 @@ node.default['graphite']['relay_rules'] = [
   }
 ]
 
-include_recipe 'graphite::default'
-include_recipe 'graphite::carbon_relay'
+include_recipe 'rackspace_graphite::default'
+include_recipe 'rackspace_graphite::carbon_relay'
 
 template "#{node['graphite']['base_dir']}/bin/whisper-clean-this-node.sh" do
   source 'whisper-clean-this-node.sh.erb'
