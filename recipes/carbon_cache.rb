@@ -16,22 +16,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 service_type = node['graphite']['carbon']['service_type']
-case service_type
-when 'runit'
-  carbon_cache_service_resource = 'runit_service[carbon-cache]'
-else
-  carbon_cache_service_resource = 'service[carbon-cache]'
-end
+caches = find_carbon_cache_services(node)
 
-template "#{node['graphite']['base_dir']}/conf/storage-schemas.conf" do
-  source 'storage.conf.erb'
-  owner node['graphite']['user_account']
-  group node['graphite']['group_account']
-  variables(:storage_config => node['graphite']['storage_schemas'])
-  only_if { node['graphite']['storage_schemas'].is_a?(Array) }
-  notifies :restart, carbon_cache_service_resource
+if node['graphite']['storage_schemas'].is_a?(Array) && node['graphite']['storage_schemas'].length > 0
+  template "#{node['graphite']['base_dir']}/conf/storage-schemas.conf" do
+    source 'storage.conf.erb'
+    owner node['graphite']['user_account']
+    group node['graphite']['group_account']
+    variables(:storage_config => node['graphite']['storage_schemas'])
+    only_if { node['graphite']['storage_schemas'].is_a?(Array) }
+    caches.each do |service|
+      notifies :restart, service
+    end
+  end
+else
+  file "#{node['graphite']['base_dir']}/conf/storage-schemas.conf" do
+    action :delete
+    caches.each do |service|
+      notifies :restart, service
+    end
+  end
 end
 
 if node['graphite']['storage_aggregation'].is_a?(Array) && node['graphite']['storage_aggregation'].length > 0
@@ -40,12 +45,16 @@ if node['graphite']['storage_aggregation'].is_a?(Array) && node['graphite']['sto
     owner node['graphite']['user_account']
     group node['graphite']['group_account']
     variables(:storage_config => node['graphite']['storage_aggregation'])
-    notifies :restart, carbon_cache_service_resource
+    caches.each do |service|
+      notifies :restart, service
+    end
   end
 else
   file "#{node['graphite']['base_dir']}/conf/storage-aggregation.conf" do
     action :delete
-    notifies :restart, carbon_cache_service_resource
+    caches.each do |service|
+      notifies :restart, service
+    end
   end
 end
 

@@ -1,27 +1,34 @@
 ---
 driver_plugin: vagrant
 driver_config:
-  require_chef_omnibus: true
+  require_chef_omnibus: latest
 
 platforms:
 - name: ubuntu-12.04
+  driver_config:
+    box: opscode-ubuntu-12.04
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box
   run_list:
-  - recipe[apt]
-- name: ubuntu-10.04
-  run_list:
-  - recipe[apt]
+  - recipe[rackspace_apt]
 - name: centos-6.4
+  driver_config:
+    box: opscode-centos-6.4
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.4_chef-provisionerless.box
+- name: debian-7.2.0
+  driver_config:
+    box: opscode-debian-7.2.0
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.2.0_chef-provisionerless.box
   run_list:
-  - recipe[yum]
-- name: centos-5.9
-  run_list:
-  - recipe[yum]
+  - recipe[rackspace_apt]
 
 suites:
 - name: default
   run_list:
   - recipe[graphite]
-  attributes: {}
+  attributes:
+    graphite:
+      carbon:
+        service_type: "init"
 
 - name: ssl
   run_list:
@@ -36,17 +43,7 @@ suites:
       "listen_port": "443"
     }
   }
-
-- name: uwsgi
-  run_list:
-  - recipe[graphite]
-  attributes: {
-    "graphite": {
-      "listen_port": "8080",
-      "web_server": "uwsgi"
-    }
-  }
-
+  
 - name: carbon-relay
   run_list:
   - recipe[graphite]
@@ -104,3 +101,45 @@ suites:
   run_list:
   - recipe[graphite::federated]
   attributes: {}
+- name: carbon-cache
+  run_list:
+  - recipe[graphite]
+  - recipe[graphite::carbon_cache]
+  attributes: {
+    "graphite": {
+      "carbon": {
+        "caches": {
+          "a": {
+            "line_reciever_port": 2003,
+            "udp_receiver_port": 2003,
+            "pickle_receiver_port": 2004,
+            "cache_query_port": 7002,
+            "line_receiver_interface": 0.0.0.0,
+            "udp_receiver_interface": 0.0.0.0,
+            "pickle_receiver_interface": 0.0.0.0,
+            "cache_query_interface": 0.0.0.0
+          },
+          "b": {
+            "line_receiver_port": 2005,
+            "udp_receiver_port": 2005,
+            "pickle_receiver_port": 2006,
+            "cache_query_port": 7003,
+            "line_receiver_interface": 0.0.0.0,
+            "udp_receiver_interface": 0.0.0.0,
+            "pickle_receiver_interface": 0.0.0.0,
+            "cache_query_interface": 0.0.0.0
+          },
+          "c": {
+            "line_receiver_port": 2007,
+            "udp_receiver_port": 2007,
+            "pickle_receiver_port": 2008,
+            "cache_query_port": 7004,
+            "line_receiver_interface": 0.0.0.0,
+            "udp_receiver_interface": 0.0.0.0,
+            "pickle_receiver_interface": 0.0.0.0,
+            "cache_query_interface": 0.0.0.0
+          }
+        }
+      }
+    }
+  }
