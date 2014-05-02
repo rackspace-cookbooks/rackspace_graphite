@@ -1,11 +1,10 @@
-#!/bin/sh
-exec 2>&1
+description "uwsgi graphite instance"
+start on runlevel [2345]
+stop on runlevel [06]
+
 exec uwsgi --processes <%= node['graphite']['uwsgi']['workers'] %> \
 <% if node['graphite']['uwsgi']['carbon'] -%>
---plugins carbon --carbon <%= node['graphite']['uwsgi']['carbon'] %> \
-<% end -%>
-<% if node['graphite']['uwsgi']['listen_http'] -%>
---http :<%= node['graphite']['listen_port'] %> \
+--plugins carbon --carbon 127.0.0.1:2003 \
 <% end -%>
 --pythonpath <%= node['graphite']['base_dir'] %>/lib \
 --pythonpath <%= node['graphite']['base_dir'] %>/webapp/graphite \
@@ -14,4 +13,8 @@ exec uwsgi --processes <%= node['graphite']['uwsgi']['workers'] %> \
 --no-orphans --master \
 --procname graphite-web \
 --die-on-term \
+<% if node['graphite']['uwsgi']['listen_http'] -%>
+--http <%= node['graphite']['listen_ip'] unless node['graphite']['listen_ip'].nil? %>:<%= node['graphite']['listen_port'] %>
+<% else -%>
 --socket <%= node['graphite']['uwsgi']['socket'] %>
+<% end -%>

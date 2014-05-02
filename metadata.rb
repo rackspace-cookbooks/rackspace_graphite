@@ -16,5 +16,5 @@ depends  'runit', '~> 1.0'
 depends  'memcached'
 
 suggests 'systemd'
-suggests 's6'
 suggests 'graphiti'
+suggests 'delayed_evaluator'

@@ -1,15 +1,36 @@
 AllCops:
   Excludes:
     - vendor/**
+    - tmp/**
+    - cookbooks/**
+    - bin/**
 
-AlignParameters:
-  Enabled: false
+# Disable requirement of "encoding" headers on files
 Encoding:
   Enabled: false
-HashSyntax:
-  Enabled: false
-LineLength:
-  Enabled: false
-MethodLength:
-  Max: 30
 
+# Increase line length, we're not on VT220s anymore
+LineLength:
+  Max: 180
+
+# Increase allowed lines in a method.  Short methods are good, but 10 lines
+#   is a bit too low.
+MethodLength:
+  Max: 40
+
+# Favor explicit over implicit code: don't complain of "redundant returns"
+RedundantReturn:
+  Enabled: false
+
+# Don't complain about if/unless modifiers.  The merit of this is debatable
+#   and it will likely require building of over-length lines.
+IfUnlessModifier:
+  Enabled: false
+
+# Raise allowed CyclomaticComplexity to 10.
+CyclomaticComplexity:
+  Max: 10
+
+# Disable Single Space before first arg
+SingleSpaceBeforeFirstArg:
+  Enabled: false

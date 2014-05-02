@@ -17,12 +17,18 @@
 # limitations under the License.
 #
 
+case node['platform_family']
+when 'debian'
+  package 'daemon'
+end
+
 template '/etc/init.d/carbon-cache' do
   source 'carbon.init.erb'
   variables(
-    :name    => 'cache',
-    :dir     => node['graphite']['base_dir'],
-    :user    => node['graphite']['user_account']
+    :name       => 'cache',
+    :dir        => node['graphite']['base_dir'],
+    :user       => node['graphite']['user_account'],
+    :instances  => node['graphite']['carbon']['caches']
   )
   mode 00744
   notifies :restart, 'service[carbon-cache]'
